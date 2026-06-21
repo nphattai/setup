@@ -12,7 +12,8 @@ configuration, operations runbook, and the decision records behind the current s
 ```
 agent-memory/
 ├── docker-compose.yml        # the stack (single `agentmemory` service)
-├── agentmemory.docker.env    # env: LLM wiring, embeddings, feature flags
+├── agentmemory.docker.env    # env: LLM wiring, embeddings, feature flags (gitignored; copy from .example)
+├── agentmemory.docker.env.example  # tracked template — `cp` it to the above on a fresh clone
 ├── docker/                   # image build context
 │   ├── Dockerfile.agentmemory
 │   ├── agentmemory-entrypoint.sh
@@ -31,6 +32,7 @@ agent-memory/
 
 ```bash
 cd ~/Work/setup/agent-memory
+cp agentmemory.docker.env.example agentmemory.docker.env   # first time only (env is gitignored)
 docker compose up -d
 open http://localhost:3113/#dashboard
 ```
