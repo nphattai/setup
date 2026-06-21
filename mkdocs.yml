@@ -5,10 +5,9 @@
 site_name: setup — multi-agent dev workspace
 site_description: Engines (infra · agent-memory), the Multica squad template, and concrete projects — one navigable, diagrammed reference.
 
-# TODO(owner): set these once the GitHub remote exists. Pages URL is https://<owner>.github.io/<repo>/
-site_url: https://OWNER.github.io/setup/
-repo_url: https://github.com/OWNER/setup
-repo_name: OWNER/setup
+site_url: https://nphattai.github.io/setup/
+repo_url: https://github.com/nphattai/setup
+repo_name: nphattai/setup
 edit_uri: edit/main/
 
 # Source docs live in-place across the repo root (engines/template/projects each keep their own docs/).
