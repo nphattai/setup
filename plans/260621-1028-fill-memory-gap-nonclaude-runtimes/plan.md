@@ -1,5 +1,10 @@
 # Plan — Fill the agent-memory gap for non-Claude runtimes
 
+> ⚠️ **PARTIALLY SUPERSEDED (2026-06-21) by DECISIONS #23:** the "keep gemini CLI" decision below
+> was reversed — Google deprecated the Gemini CLI (sign-in disabled). **RS-Research now runs on the
+> Antigravity CLI (`agy`)**, and the memory shim is wired into `agy` via `~/.gemini/config/mcp_config.json`
+> (file-based; there is no `gemini mcp add` / `agy mcp add`). The rest of this plan (Claude/Codex/OpenCode wiring) stands.
+
 Date: 2026-06-21 · Origin: self-review F4 · Owner: tai
 
 ## Decisions locked (review + user)

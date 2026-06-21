@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // agentmemory-mcp — stdio MCP shim over the agentmemory REST API (:3111).
 //
-// Gives any MCP-capable runtime (Codex, OpenCode, gemini CLI, Claude) two tools:
+// Gives any MCP-capable runtime (Codex, OpenCode, Antigravity `agy`, Claude) two tools:
 //   • memory_search — recall prior lessons/observations for the current repo
 //   • memory_save   — persist a durable lesson (non-Claude agents; Claude uses hooks)
 //

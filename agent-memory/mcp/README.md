@@ -36,7 +36,9 @@ cd ~/Work/setup/agent-memory/mcp && npm install
 SHIM=/Users/tainguyen/Work/setup/agent-memory/mcp/agentmemory-mcp.mjs
 URL=http://127.0.0.1:3111
 codex  mcp add agentmemory --env AGENTMEMORY_URL=$URL -- node "$SHIM"
-agy    mcp add -s user -e AGENTMEMORY_URL=$URL agentmemory node "$SHIM"  # Antigravity CLI (replaces dead gemini CLI; same mcp-add syntax — confirm via `agy mcp --help`)
+# Antigravity `agy` (replaces the dead gemini CLI): NO `mcp add` subcommand — it's FILE-BASED.
+#   Add to ~/.gemini/config/mcp_config.json (unified, IDE+CLI) — or ~/.gemini/antigravity-cli/mcp_config.json (CLI-only):
+#     { "mcpServers": { "agentmemory": { "command":"node", "args":["$SHIM"], "env":{"AGENTMEMORY_URL":"$URL"} } } }
 # OpenCode: ~/.config/opencode/opencode.jsonc  -> mcp.agentmemory (type local)
 # Claude:   ~/.claude.json                     -> mcpServers.agentmemory (type stdio)
 ```
