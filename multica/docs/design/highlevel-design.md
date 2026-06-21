@@ -65,7 +65,7 @@ train)**. Lead re-engages only at gates → saves Claude Max quota, removes the 
 
 ```mermaid
 flowchart TB
-    L1["<b>L1 · SQUAD CONSTITUTION</b> — Multica Instructions tab (all agents inherit)<br/><small>gates · git constitution · DoD · escalation · \"obey repo .claude/rules + AGENTS.md/CLAUDE.md\"</small>"]
+    L1["<b>L1 · SQUAD CONSTITUTION</b> — Multica Instructions tab (all agents inherit)<br/><small>gates · git constitution · DoD · escalation · #quot;obey repo .claude/rules + AGENTS.md/CLAUDE.md#quot;</small>"]
     L2["<b>L2 · ROLE PROMPT</b> — per agent, the specialised lens"]
     L3["<b>L3 · RUNTIME / MODEL</b> — per agent, auth + model"]
     L1 --> L2 --> L3

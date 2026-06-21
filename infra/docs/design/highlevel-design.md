@@ -18,7 +18,7 @@ flowchart TB
     subgraph STACK["dev-infra stack — singleton, always-on (2 containers)"]
         direction TB
         PG["<b>Postgres :5432</b> · pgvector/pg18<br/>db: infina_insurance_… ← dedicated DB per project<br/>db: &lt;other_project&gt;"]
-        REDIS["<b>Redis :6379</b> · one keyspace<br/>per-project key prefix e.g. \"ins_…:\""]
+        REDIS["<b>Redis :6379</b> · one keyspace<br/>per-project key prefix e.g. #quot;ins_…:#quot;"]
     end
 
     subgraph CONSUMERS["worktrees / repos / squad agents (consumers)"]

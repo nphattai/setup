@@ -115,11 +115,11 @@ sequenceDiagram
     participant B as RS-Builder
     participant Q as RS-QA
     participant R as RS-Reviewer
-    H->>L: create issue + drop resources in .squad/inbox/<KEY>/
+    H->>L: create issue + drop resources in .squad/inbox/&lt;KEY&gt;/
     L->>L: read issue + inbox → PRD/design
     H-->>L: GATE 1 — approve design
     L->>B: slice sub-issues (AC + train + inbox path)
-    B->>B: new-worktree + wire-env (validate vs .env.example; BLOCK if incomplete)
+    B->>B: new-worktree + wire-env (validate vs .env.example — BLOCK if incomplete)
     B->>B: dotenvx run -- … → implement 1 AC at a time → unit green
     B->>Q: push feat branch (no PR) → In-Review
     Q->>Q: per-feat E2E vs shared infra
@@ -128,7 +128,7 @@ sequenceDiagram
     else green per feat
         Q->>R: hand off
         R->>L: static diff review → approve
-        L->>L: verify 3 greens → open + merge feat → release-<slug>
+        L->>L: verify 3 greens → open + merge feat → release-&lt;slug&gt;
         L-->>H: GATE 2/3 — release→staging→master→tag
     end
 ```
