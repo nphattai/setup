@@ -1,0 +1,45 @@
+# Shared local dev infrastructure — ONE Postgres + ONE Redis for all projects/worktrees.
+# Isolation is logical, not per-container: dedicated DATABASE per project (PG enforces),
+# key PREFIX per project (app must honor via ioredis keyPrefix). See docs/design.
+#
+# Standard ports (5432/6379): dev-infra is now THE local stack — repos' own
+# docker-compose.local.yml are retired in favor of this (DECISIONS #16).
+# Bound to 127.0.0.1 — local-only, never exposed on the network.
+name: dev-infra
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg18        # must match every consumer profile's pinned version
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev              # NON-PROD, local-only
+      POSTGRES_DB: postgres               # maintenance DB; per-project DBs created by infractl
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # PG18+ official image stores data in a subdir; mount the PARENT, not /data
+      # (mounting /data makes the image treat it as an "unused volume" and crash-loop).
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  redisdata:

@@ -1,0 +1,7 @@
+# Whitelist only what the Dockerfiles COPY — keeps the build context tiny and
+# avoids shipping the ~100MB data dirs / backups to the daemon.
+*
+!docker/
+!gemini-proxy/package.json
+!gemini-proxy/package-lock.json
+!gemini-proxy/gemini-cli-proxy.mjs

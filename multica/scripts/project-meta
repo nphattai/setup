@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""project-meta — read a project manifest and emit shell-sourceable vars for one app.
+
+The generic engine (wire-env.sh / new-worktree.sh / start-local-stack.sh) calls this so
+NO project specifics live in the scripts. The manifest projects/<slug>/project.yml is the
+single source of truth; this just projects the slice a script needs.
+
+Usage:
+  project-meta <slug> [<app>] [<stage>]
+
+With <app>: prints (eval-safe `KEY='value'` lines)
+  PROJ_ROOT      expanded local_path
+  INFRA_KEY      infractl project key (backend infra provisioning)
+  STAGE_DEFAULT  manifest stage_default
+  APP_KIND       backend | frontend (the app's repo type)
+  APP_REPO       repo short-key (e.g. services / webapp)
+  APP_REPO_DIR   PROJ_ROOT/<repo name>  (absolute repo path)
+  APP_CONTRACT   repo-relative env contract (.env.example / .env.sample)
+  APP_STAGEFILE  repo-relative stage env file for <stage>
+  APP_REQUIRED   space-joined required-local secret names (the ONLY copy)
+
+Without <app>: prints PROJ_ROOT / INFRA_KEY / STAGE_DEFAULT / APPS (space-joined app names).
+Exits 2 on unknown slug/app. Never prints secret VALUES — only var NAMES.
+"""
+import os
+import sys
+
+try:
+    import yaml
+except ImportError:
+    sys.stderr.write("project-meta: PyYAML not installed (pip3 install pyyaml)\n")
+    sys.exit(2)
+
+
+def shq(v):
+    """Single-quote a value for safe shell eval."""
+    return "'" + str(v).replace("'", "'\\''") + "'"
+
+
+def find_manifest(slug):
+    here = os.path.dirname(os.path.abspath(__file__))          # multica/scripts
+    root = os.path.abspath(os.path.join(here, "..", ".."))     # ~/Work/setup
+    path = os.path.join(root, "projects", slug, "project.yml")
+    if not os.path.isfile(path):
+        sys.stderr.write(f"project-meta: manifest not found: {path}\n")
+        sys.exit(2)
+    return path
+
+
+def main():
+    if len(sys.argv) < 2:
+        sys.stderr.write("usage: project-meta <slug> [<app>] [<stage>]\n")
+        sys.exit(2)
+    slug = sys.argv[1]
+    app = sys.argv[2] if len(sys.argv) > 2 else None
+    with open(find_manifest(slug)) as fh:
+        m = yaml.safe_load(fh)
+
+    proj_root = os.path.expanduser(m.get("local_path", ""))
+    infra_key = (m.get("infra") or {}).get("key", "")
+    stage_default = m.get("stage_default", "local")
+    repos = m.get("repos") or {}
+
+    out = [
+        f"PROJ_ROOT={shq(proj_root)}",
+        f"INFRA_KEY={shq(infra_key)}",
+        f"STAGE_DEFAULT={shq(stage_default)}",
+    ]
+
+    if app is None:
+        apps = [a for r in repos.values() for a in (r.get("apps") or {})]
+        out.append(f"APPS={shq(' '.join(apps))}")
+        # REPOS = ';'-joined "type|absolute-dir|name" tuples for whole-stack tooling
+        tuples = [
+            f"{r.get('type','')}|{os.path.join(proj_root, r.get('name',''))}|{r.get('name','')}"
+            for r in repos.values()
+        ]
+        out.append(f"REPOS={shq(';'.join(tuples))}")
+        print("\n".join(out))
+        return
+
+    stage = sys.argv[3] if len(sys.argv) > 3 else stage_default
+
+    # locate the repo that owns this app
+    repo_key = repo = None
+    for rk, r in repos.items():
+        if app in (r.get("apps") or {}):
+            repo_key, repo = rk, r
+            break
+    if repo is None:
+        known = [a for r in repos.values() for a in (r.get("apps") or {})]
+        sys.stderr.write(f"project-meta: unknown app '{app}' (known: {', '.join(known)})\n")
+        sys.exit(2)
+
+    appcfg = repo["apps"][app]
+    contract = appcfg.get("contract", "")
+    stage_files = appcfg.get("stage_files") or []
+    # pick the stage file whose basename is `.env.<stage>`; else the single FE `.env`
+    stagefile = ""
+    for sf in stage_files:
+        if os.path.basename(sf) == f".env.{stage}":
+            stagefile = sf
+            break
+    if not stagefile and stage_files:
+        stagefile = stage_files[0]
+
+    required = ((m.get("secrets") or {}).get("required_local") or {}).get(app, []) or []
+
+    out += [
+        f"APP_KIND={shq(repo.get('type', ''))}",
+        f"APP_REPO={shq(repo_key)}",
+        f"APP_REPO_DIR={shq(os.path.join(proj_root, repo.get('name', '')))}",
+        f"APP_CONTRACT={shq(contract)}",
+        f"APP_STAGEFILE={shq(stagefile)}",
+        f"APP_REQUIRED={shq(' '.join(required))}",
+    ]
+    print("\n".join(out))
+
+
+if __name__ == "__main__":
+    main()

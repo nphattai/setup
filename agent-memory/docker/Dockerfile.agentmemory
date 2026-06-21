@@ -1,0 +1,35 @@
+# agentmemory: runs the `agentmemory` worker, which auto-starts the NATIVE iii
+# engine (downloaded to /root/.local on first boot) with
+# `iii --config <pkg>/dist/iii-config.yaml`. We overlay that config with the
+# shipped docker variant so the engine binds 0.0.0.0 (reachable from the host
+# via published ports) and persists state under /data.
+#
+# AGENTMEMORY_USE_DOCKER is intentionally left unset so the CLI uses the native
+# iii binary rather than spawning its own docker-compose (no docker-in-docker).
+FROM node:22-slim
+
+# curl + tar are required by the CLI's first-boot auto-installer, which fetches
+# the native iii engine binary into /root/.local/bin (persisted via volume).
+# socat forwards 0.0.0.0:3113 -> 127.0.0.1:3113 so the viewer (which the worker
+# hardcodes to loopback) is reachable through the published port.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl tar socat \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm install -g @agentmemory/agentmemory@0.9.27 \
+    && npm cache clean --force
+
+# Overlay the docker iii-config (host 0.0.0.0, data at /data) onto the path the
+# CLI passes to `iii --config` (__dirname/iii-config.yaml inside the package).
+COPY docker/iii-config.docker.yaml /tmp/iii-config.docker.yaml
+RUN cp /tmp/iii-config.docker.yaml \
+       "$(npm root -g)/@agentmemory/agentmemory/dist/iii-config.yaml" \
+    && rm /tmp/iii-config.docker.yaml
+
+COPY docker/agentmemory-entrypoint.sh /usr/local/bin/agentmemory-entrypoint.sh
+RUN chmod +x /usr/local/bin/agentmemory-entrypoint.sh
+
+WORKDIR /app
+ENV NODE_ENV=production
+EXPOSE 3111 3112
+ENTRYPOINT ["/usr/local/bin/agentmemory-entrypoint.sh"]
+CMD ["agentmemory"]

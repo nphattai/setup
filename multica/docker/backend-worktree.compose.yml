@@ -1,0 +1,26 @@
+# SUPERSEDED by ~/Work/setup/infra (DECISIONS #16) — kept for reference only.
+# Per-worktree container isolation was judged too expensive; infra now provides one shared
+# PG+Redis with logical isolation. To unblock parallel backend, use per-worktree DB keys in
+# infractl (free), not this file. See ~/Work/setup/infra/docs/decisions/0001.
+#
+# DEFERRED — backend-worktree isolation (Phase 2, not used in v1).
+# Lets multiple backend worktrees run concurrently without port/DB collisions.
+# Enable per worktree with unique PROJECT + port offsets:
+#   PROJECT=app-wt-SHP1234 PG_PORT=55432 REDIS_PORT=56379 \
+#     docker compose -p $PROJECT -f docker/backend-worktree.compose.yml up -d
+# Mirror the BE repo's docker/docker-compose.local.yml; bump image/versions to match it.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app          # NON-PROD local-only
+      POSTGRES_DB: appdb              # sample; real db derives from the project key
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    tmpfs:
+      - /var/lib/postgresql/data       # ephemeral per-worktree DB
+  redis:
+    image: redis:7
+    ports:
+      - "${REDIS_PORT:-6379}:6379"

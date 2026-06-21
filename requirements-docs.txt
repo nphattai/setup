@@ -1,0 +1,4 @@
+# Docs site build deps (MkDocs Material + same-dir source layout).
+# Mermaid is rendered by Material's bundled superfences — no extra package needed.
+mkdocs-material>=9.5,<10
+mkdocs-same-dir>=0.1.3

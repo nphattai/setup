@@ -1,0 +1,149 @@
+# Docs site for ~/Work/setup — renders all published .md + Mermaid diagrams, deploys to GitHub Pages.
+# Build:  pip install -r requirements-docs.txt && mkdocs serve   (preview at http://127.0.0.1:8000)
+# Deploy: pushed to main -> .github/workflows/docs.yml builds and publishes to the gh-pages branch.
+
+site_name: setup — multi-agent dev workspace
+site_description: Engines (infra · agent-memory), the Multica squad template, and concrete projects — one navigable, diagrammed reference.
+
+# TODO(owner): set these once the GitHub remote exists. Pages URL is https://<owner>.github.io/<repo>/
+site_url: https://OWNER.github.io/setup/
+repo_url: https://github.com/OWNER/setup
+repo_name: OWNER/setup
+edit_uri: edit/main/
+
+# Source docs live in-place across the repo root (engines/template/projects each keep their own docs/).
+# docs_dir = repo root so existing relative cross-links keep resolving and nothing is duplicated.
+# mkdocs-same-dir lets docs_dir equal the config's own directory (MkDocs forbids that by default).
+docs_dir: .
+plugins:
+  - search
+  - same-dir
+
+# Keep build output and non-doc material out of the site (docs_dir is the whole repo root).
+# NOTE: nav must stay .md-only — the file-type globs below also exclude non-.md files from being
+# copied as dead-weight static assets, so adding a .yml/.sh/etc. page to nav would fail the build.
+exclude_docs: |
+  /site/
+  plans/
+  .github/
+  **/node_modules/
+  agent-memory/data/
+  agent-memory/agentmemory-home/
+  **/*.db
+  **/.env*
+  **/Dockerfile*
+  **/*.sh
+  **/*.yaml
+  **/*.yml
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - Home: README.md
+  - Architecture: ARCHITECTURE.md
+
+  - Infra (engine):
+      - Overview: infra/README.md
+      - High-level design: infra/docs/design/highlevel-design.md
+      - ADR 0001 — shared instance, logical isolation: infra/docs/decisions/0001-shared-instance-logical-isolation.md
+
+  - Multica (template):
+      - Overview: multica/README.md
+      - Design:
+          - High-level design: multica/docs/design/highlevel-design.md
+          - Runtime & capacity: multica/docs/design/runtime-and-capacity.md
+          - Env & execution flow: multica/docs/design/env-and-execution-flow.md
+      - Decisions: multica/docs/decisions/DECISIONS.md
+      - Templates:
+          - Legend & how to instantiate: multica/docs/templates/README.tmpl.md
+          - Squad constitution: multica/docs/templates/00-squad-constitution.tmpl.md
+          - RS-Lead: multica/docs/templates/rs-lead.tmpl.md
+          - RS-Builder: multica/docs/templates/rs-builder.tmpl.md
+          - RS-Reviewer: multica/docs/templates/rs-reviewer.tmpl.md
+          - RS-QA: multica/docs/templates/rs-qa.tmpl.md
+          - RS-Research: multica/docs/templates/rs-research.tmpl.md
+      - Skills:
+          - Overview: multica/skills/README.md
+          - builder-dev-loop: multica/skills/builder-dev-loop/SKILL.md
+          - root-cause-first: multica/skills/root-cause-first/SKILL.md
+          - safe-refactor: multica/skills/safe-refactor/SKILL.md
+      - Env notes: multica/env/README.md
+      - Docker notes: multica/docker/README.md
+      - Archive:
+          - Working-model design (superseded): multica/docs/archive/multica-working-model-design.md
+          - Infina insurance setup (superseded): multica/docs/archive/multica-infina-insurance-setup.md
+
+  - Agent Memory (engine):
+      - Overview: agent-memory/README.md
+      - Architecture: agent-memory/docs/architecture.md
+      - Runbook: agent-memory/docs/runbook.md
+      - LLM backend: agent-memory/docs/llm-backend.md
+      - MCP shim: agent-memory/mcp/README.md
+      - Decisions:
+          - ADR 0001 — Antigravity OAuth via CLIProxyAPI: agent-memory/docs/decisions/0001-use-antigravity-oauth-via-cliproxyapi.md
+          - ADR 0002 — remove gemini-proxy: agent-memory/docs/decisions/0002-remove-gemini-proxy.md
+          - ADR 0003 — ClaudeProbe & worktree hook fixes: agent-memory/docs/decisions/0003-claudeprobe-and-worktree-hook-fixes.md
+          - ADR 0004 — relocate setup & fresh store: agent-memory/docs/decisions/0004-relocate-setup-and-fresh-store.md
+
+  - Projects:
+      - aaa (first instance):
+          - Overview: projects/aaa/README.md
+          - Infra integration: projects/aaa/integration.md
+          - Squad:
+              - Setup & order: projects/aaa/squad/README.md
+              - Constitution: projects/aaa/squad/00-squad-constitution.md
+              - RS-Lead: projects/aaa/squad/rs-lead.md
+              - RS-Builder: projects/aaa/squad/rs-builder.md
+              - RS-Reviewer: projects/aaa/squad/rs-reviewer.md
+              - RS-QA: projects/aaa/squad/rs-qa.md
+              - RS-Research: projects/aaa/squad/rs-research.md
+          - Skills:
+              - inf-api-contract: projects/aaa/skills/inf-api-contract/SKILL.md
+              - inf-e2e-mobile-maestro: projects/aaa/skills/inf-e2e-mobile-maestro/SKILL.md

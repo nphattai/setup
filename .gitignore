@@ -1,0 +1,8 @@
+# MkDocs local build output (the site is published to the gh-pages branch by CI, never committed to main).
+/site/
+
+# Python venv used to preview the docs locally.
+.venv/
+
+# Real runtime env files (key-shaped values) — track only *.env.example, never live env.
+agent-memory/agentmemory.docker.env

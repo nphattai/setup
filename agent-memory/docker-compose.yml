@@ -1,0 +1,36 @@
+# agentmemory — local memory engine for Claude Code.
+#   agentmemory : the `agentmemory` worker + native iii engine
+#                 (REST :3111, stream :3112, viewer/dashboard :3113).
+#
+# LLM enrichment (compression, lesson consolidation, graph extraction) is provided
+# by the HOST's CLIProxyAPI at host.docker.internal:8317 using Antigravity OAuth.
+# Embeddings run locally inside the container (EMBEDDING_PROVIDER=local).
+# See docs/architecture.md and docs/decisions/ for the full story.
+#
+# Run from this directory:  docker compose up -d
+# (add --build only when the Dockerfile or app source changed)
+name: agentmemory-stack
+
+services:
+  agentmemory:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.agentmemory
+    image: agentmemory-stack/agentmemory:local
+    container_name: agentmemory
+    restart: unless-stopped
+    env_file:
+      - agentmemory.docker.env
+    ports:
+      - "127.0.0.1:3111:3111"   # REST API (clients connect here)
+      - "127.0.0.1:3112:3112"   # stream
+      - "127.0.0.1:3113:3114"   # viewer/dashboard: host 3113 -> container socat 3114 -> viewer 127.0.0.1:3113
+    volumes:
+      - ./data:/data                          # persistent memory store (bind mount)
+      - ./agentmemory-home:/root/.agentmemory # engine config + standalone store
+      - agentmemory_local:/root/.local        # native iii binary (downloaded once, then cached)
+      - agentmemory_cache:/root/.cache        # local embedding model cache
+
+volumes:
+  agentmemory_local:
+  agentmemory_cache:

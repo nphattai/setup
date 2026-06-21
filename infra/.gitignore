@@ -1,0 +1,5 @@
+# infractl writes connection files into consumer worktrees, not here, but ignore stray ones.
+.env.infra
+.env.local
+*.log
+state/

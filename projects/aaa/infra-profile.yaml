@@ -1,0 +1,24 @@
+# Profile — infina-insurance-partner-services (NX monorepo; app: apps/insurtech-service).
+# Documentation + version contract. infractl DERIVES the database name from the key
+# (lowercase, '-'->'_'); values below must match that derivation.
+key: infina-insurance-partner-services
+
+postgres:
+  image: pgvector/pgvector:pg18              # MUST equal compose/infra.yml; bump together
+  database: infina_insurance_partner_services
+  # The app reads DISCRETE vars (via @infinavn/common PGConfig), not DATABASE_URL:
+  env: [DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD]
+  # In-DB isolation by the app itself: Postgres schema `ins` + table prefix `ins_`.
+  schema: ins
+  extensions: [vector]                       # enabled by the app's migrations (pgvector image)
+
+redis:
+  env: [REDIS_URL]
+  # Isolation is the APP's job: insurtech-service sets ioredis keyPrefix 'ins_'. Infra injects
+  # NO prefix. Nothing to wire.
+  key_prefix_in_app: ins_
+
+notes:
+  - "v1: per-project DB + fixed schema/prefix -> worktrees share them -> backend serialized (multica #12/#16)."
+  - "Migrations/seed: repo's `make migrate` / tools/migration-run.sh, pointed at the injected env."
+  - "Zero app code change — integration is config-only. See ./integration.md."

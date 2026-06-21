@@ -1,0 +1,78 @@
+# Consolidated project manifest — SINGLE SOURCE OF TRUTH for project `aaa`.
+# Human-maintained. Drives: (1) infra provisioning via infractl, (2) per-worktree
+# env wiring + validation via wire-env, (3) squad setup. Agents READ this; they
+# NEVER create infra, create DBs, or set/read secret values.
+#
+# Hard gate (user, 2026-06-21): an agent may only start a task once EVERY var in
+# the target surface's contract (.env.example / .env.sample) resolves to a correct
+# value for the working stage. wire-env validates the COMPOSED env against the
+# contract — a missing required var is a BLOCK (reported by NAME), never invented.
+#
+# NOTE: both repos already ship mature env contracts + stage files. We point at
+# them; we do NOT rename/duplicate (services' `.env.sample` is whitelisted in
+# .dockerignore/.railwayignore + referenced in docs; the repo also sits on the
+# shared `release` branch). The gate is name-agnostic — it reads `contract:` below.
+
+project: aaa
+local_path: ~/Work/infina-ai/aaa
+stages: [local, staging]             # local = dev vs shared infra · staging = repro vs real staging data (read-only, PII rules)
+stage_default: local
+
+repos:
+  services:
+    name: infina-insurance-partner-services
+    type: backend
+    apps:
+      insurtech-service:
+        contract: apps/insurtech-service/.env.sample        # the var contract (88-line template)
+        stage_files: [apps/insurtech-service/.env.local, apps/insurtech-service/.env.staging]
+  webapp:
+    name: infina-insurance-partner-webapp
+    type: frontend
+    apps:
+      nomi:
+        contract: apps/nomi/.env.example
+        stage_files: [apps/nomi/.env.local, apps/nomi/.env.staging]   # per-stage dotenvx files
+      admin:
+        contract: apps/admin/.env.example
+        stage_files: [apps/admin/.env.local, apps/admin/.env.staging]
+      nomi-mobile:
+        contract: apps/nomi-mobile/.env.example             # EXPO_PUBLIC_* only — NON-SECRET by design
+        stage_files: [apps/nomi-mobile/.env.local, apps/nomi-mobile/.env.staging]
+    root_contract: .env.example                              # workspace-root (vitest loads it)
+
+# Human-provisioned via infractl (NOT agents). The .env.infra it emits OVERRIDES
+# the contract's localhost/dev defaults (esp. DB_NAME: sample says `aaa`, infra
+# uses the dedicated `infina_insurance_partner_services`).
+infra:
+  key: infina-insurance-partner-services    # infractl project key — db name + redis prefix derive from it
+  postgres: { database: infina_insurance_partner_services, schema: ins, image: pgvector/pgvector:pg18 }
+  redis:    { key_prefix: ins_ }
+  overrides: [DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD, DATABASE_URL, REDIS_URL]
+
+# Secret model. Injector = dotenvx (AWS hosts staging/prod; Railway not in play).
+# Worktree-portable: encrypted .env.<stage> is committed (safe) so it travels to
+# every worktree; only .env.keys (decrypt key, gitignored, host-only) is wired in.
+# Human maintains the VALUES per stage; agents run `dotenvx run -- <cmd>` and
+# never decrypt/print. Mobile holds NO secrets (Expo inlines EXPO_PUBLIC_* → BE/gateway holds keys).
+secrets:
+  injector: dotenvx
+  values_owner: human
+  required_local:                    # must resolve for local-stage work, else BLOCK
+    insurtech-service: [OPENAI_API_KEY, AUTH_JWT_ACCESS_SECRET, AUTH_JWT_REFRESH_SECRET]
+    nomi:              [OPENAI_API_KEY]
+    admin:             [ADMIN_API_KEY]  # server-only x-api-key; local default `dev-admin-api-key` must MATCH the BE's ADMIN_API_KEY (else 401). NOT OPENAI/USER_API_URL (admin needs neither).
+    nomi-mobile:       []            # none — non-secret by design
+  optional_local:                    # needed only when a feature is enabled
+    insurtech-service:
+      - { vars: [TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SERVICE_SID], when: "OTP_PROVIDER=twilio" }
+      - { vars: [COGNITO_USER_POOL_ID, COGNITO_CLIENT_ID, COGNITO_CLIENT_SECRET, COGNITO_ACCESS_KEY_ID, COGNITO_SECRET_ACCESS_KEY], when: "admin auth flows under test" }
+      - { vars: [AUTH_ADMIN_BOOTSTRAP_SECRET], when: "root-user bootstrap under test" }
+    nomi:
+      - { vars: [ONECLAW_BASE_URL, ONECLAW_AGUI_API_KEY, ONECLAW_AGUI_USER_HMAC_KEY], when: "ONECLAW_ENABLED=true" }
+
+squad:
+  name: infina-insurance-dev
+  agents: [rs-lead, rs-builder, rs-qa, rs-reviewer, rs-research]
+  train_pattern: release-<slug>
+  inbox: .squad/inbox/<ISSUE-KEY>/   # human drops mockups/partner docs/HTML here; Lead reads from disk
