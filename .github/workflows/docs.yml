@@ -1,6 +1,6 @@
 # Build the MkDocs site and publish it to the gh-pages branch on every push to main.
 # One-time GitHub setup: Settings -> Pages -> Source = "Deploy from a branch" -> branch "gh-pages" / root.
-name: docs
+name: Docs
 
 on:
   push:
