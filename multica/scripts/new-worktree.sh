@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Create an isolated git worktree for a sub-issue, branched FROM its train, then
-# wire + VALIDATE its env (shared infra + dotenvx secrets) so an agent can start.
+# wire + VALIDATE its env (shared infra + copied per-app .env) so an agent can start.
 # GENERIC: repo/path/app facts come from projects/<project>/project.yml via `project-meta`.
 #
 # DB is HUMAN-provisioned (NOT here): run `infractl db-create <key>` once per project.
@@ -31,8 +31,8 @@ git worktree add -b "$BRANCH" "$WT" "origin/$TRAIN"
 echo "Worktree: $WT  (branch $BRANCH from $TRAIN)"
 ( cd "$WT" && yarn install )   # shares .yarn/cache
 
-# Wire + VALIDATE env (shared infra via infractl + dotenvx secrets). Fails CLOSED:
-# if a required var is missing/empty, wire-env exits non-zero and so does this script.
+# Wire + VALIDATE env (shared infra via infractl + the app's .env copied from the source
+# checkout). Fails CLOSED: a missing/empty required var makes wire-env (and this) exit non-zero.
 "$HERE/wire-env.sh" "$PROJECT" "$APP" "$WT" "$STAGE"
 
 [ "$APP_KIND" = backend ] && \

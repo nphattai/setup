@@ -58,9 +58,9 @@ REPO_WEBAPP=<local-path>/<repo-fe>
 REPO_SERVICES=<local-path>/<repo-be>
 USER_API_URL=http://localhost:3333         # for yarn gen:user
 ADMIN_API_URL=http://localhost:3333         # for yarn gen:admin
-# Worktree env is wired by scripts/new-worktree.sh → wire-env.sh (shared infra via infractl + dotenvx).
+# Worktree env is wired by scripts/new-worktree.sh → wire-env.sh (shared infra via infractl + the app's .env COPIED from the source checkout).
 # DB is HUMAN-provisioned — NEVER run `yarn setup-local` (clashes with shared infra on 5432/6379). Node >=22.18, yarn 4.9.4.
-# Run apps/tests via: dotenvx run -f .env.<stage> -- <cmd>   (stage=local default; .env.prod off-limits).
+# Run apps/tests directly — the app auto-loads its `.env` (local) / `.env.staging`: `nx dev <app>` · `yarn start`. No injector wrapper. `.env.prod` off-limits.
 # You may RUN commands that use env; NEVER cat/echo/print/commit a secret value. Missing/empty required var → report by NAME, Blocked.
 # gh CLI uses the owner's existing login (interim, no bot). NEVER read its config files.
 ```

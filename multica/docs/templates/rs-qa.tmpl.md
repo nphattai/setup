@@ -54,8 +54,8 @@ STAGING_ADMIN_URL=https://<staging-admin>
 PLAYWRIGHT_BROWSERS=installed (npx playwright install)
 # Mobile host (this Mac): Xcode iOS Simulator, Android Studio emulator, `brew install maestro`
 # Backend: SHARED infra via the worktree's wired env — NEVER `yarn setup-local` (clashes on 5432/6379).
-# Run apps/tests via: dotenvx run -f .env.<stage> -- <cmd>  (stage=local; .env.staging = real-staging repro, READ-ONLY + PII rules; .env.prod off-limits). Never point E2E/rehearse at prod.
-# Secrets NON-PROD/dev: USE via wrapper, NEVER print/paste a value. make rehearse dump = customer PII: local only, never export rows.
+# Run apps/tests directly — the app auto-loads its `.env` (local) / `.env.staging`: `nx e2e <app>` · `nx test <be-app>`. No injector wrapper. .env.staging = real-staging repro, READ-ONLY + PII rules; .env.prod off-limits. Never point E2E/rehearse at prod.
+# Secrets NON-PROD/dev: USE by running env-consuming commands, NEVER print/paste a value. make rehearse dump = customer PII: local only, never export rows.
 ```
 
 ## Custom Args (Codex)

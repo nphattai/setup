@@ -23,8 +23,9 @@ have xcrun && ok "Xcode tools" || miss "Xcode MISSING (iOS sim)"
 have adb && ok "Android platform-tools" || miss "Android emulator tooling MISSING"
 # Playwright browsers are per-repo (npx playwright install inside webapp)
 
-echo "== Secret injector (pick one) =="
-for c in dotenvx doppler op; do have "$c" && ok "$c available"; done
+echo "== Env model (conductor flow) =="
+echo "  Per-app .env is a plain, gitignored file the human maintains in each repo checkout;"
+echo "  wire-env copies it root→worktree. No secret injector (dotenvx/doppler/op) needed."
 
 echo "== Manifest tooling (scripts read projects/<slug>/project.yml) =="
 have python3 && ok "python3" || miss "python3 MISSING (project-meta needs it)"

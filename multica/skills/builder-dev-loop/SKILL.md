@@ -26,7 +26,7 @@ Implementing any sub-issue with multiple acceptance criteria (AC-1, AC-2, …).
   changed → `yarn gen:api` re-run + regenerated files committed (see `inf-api-contract`).
 - Services: `yarn verify` green · schema changes only via `yarn migration-generate`/`migration-create`
   (never hand-edit migrations).
-- Run everything through the injector: `dotenvx run -f .env.<stage> -- <cmd>`. Never print a secret value.
+- Run commands directly — the worktree's copied `.env` (local) auto-loads; no injector wrapper. Never print a secret value.
 - Push the feat branch (don't open the train PR — that's RS-Lead). Paste the test/typecheck tail as proof.
 
 ## Anti-patterns

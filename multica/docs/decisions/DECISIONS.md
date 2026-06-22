@@ -34,6 +34,8 @@
 
 | 23 | **RS-Research migrates from Gemini CLI → Antigravity CLI (`agy`).** Google deprecated the standalone Gemini CLI / Gemini Code Assist for individuals (sign-in disabled; migration deadline 2026-06-18). `agy` (install `curl -fsSL https://antigravity.google/cli/install.sh \| bash`, binary `~/.local/bin/agy`) is the replacement — Google-account OAuth (or `ANTIGRAVITY_API_KEY` for headless), exposes Gemini 3.1 Pro/3.5 Flash (+ Claude/GPT-OSS). Supersedes #3's `Research=Gemini`. **Open:** verify Multica supports `agy` as a runtime; if not, fall back to OpenCode pointed at the local CLIProxyAPI (:8317, Antigravity-backed). The memory shim (#17) is now also wired into `agy` (`~/.gemini/config/mcp_config.json` + `~/.gemini/antigravity-cli/mcp_config.json`); the dead `gemini` CLI npm package was uninstalled. **Done:** docs/cards/scripts migrated; agy+codex confirmed working (`-p`/`exec`); **Multica natively supports the Antigravity runtime** (Runtime dropdown → "Antigravity (Mac.lan)"; models incl. Gemini 3.5 Flash, Gemini 3.1 Pro, Claude Sonnet/Opus 4.6, GPT-OSS 120B) — RS-Research runs on it directly, NO OpenCode→proxy fallback needed. **Open:** confirm agy loads the agentmemory MCP in an interactive session. | Forced migration — old client rejected at sign-in. Antigravity OAuth already on-host (backs the memory proxy), so auth reuse is clean. | 06-21 |
 
+| 24 | **Env delivery = conductor flow (plain gitignored `.env`, copied per worktree). Drops dotenvx.** Each app's stage env is a plain, gitignored file the human maintains in the source checkout — local → `.env`, staging → `.env.staging`. `wire-env.sh` **copies** it root→worktree (not symlink, not encrypted); the app auto-loads it (no `dotenvx run` wrapper). Backend still gets `.env.infra` from infractl; the hard gate still BLOCKS on a missing required var (reads the plain file). Supersedes the injector parts of **#11** and **#21** (the USE-vs-EXPOSE policy stands). | dotenvx setup was breaking local work; copy-from-root mirrors the Conductor worktree model — simpler, no encryption/keys to wire, self-contained worktrees. NON-PROD values only; one-host trust model unchanged. | 06-22 |
+
 ## Confirmations / reaffirmations
 - **2026-06-21 — per-worktree DB explicitly NOT adopted.** Reviewed (self-review report) as the top
   throughput unlock; owner decided to **keep the shared per-project DB**: FE worktrees run
@@ -46,4 +48,4 @@
 ## Deferred / open
 - Author 5 custom skills (root-cause-first, safe-refactor, inf-api-contract, inf-e2e-mobile-maestro, builder-dev-loop).
 - Multica **cloud vs self-host** (affects `docker/multica/`).
-- Confirm model IDs, staging URLs, secret-injector choice.
+- Confirm model IDs, staging URLs. (Secret-injector choice resolved → #24: no injector, plain `.env` copied per worktree.)

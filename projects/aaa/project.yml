@@ -25,20 +25,20 @@ repos:
     apps:
       insurtech-service:
         contract: apps/insurtech-service/.env.sample        # the var contract (88-line template)
-        stage_files: [apps/insurtech-service/.env.local, apps/insurtech-service/.env.staging]
+        stage_files: [apps/insurtech-service/.env, apps/insurtech-service/.env.staging]  # local → .env · staging → .env.staging (plain, gitignored)
   webapp:
     name: infina-insurance-partner-webapp
     type: frontend
     apps:
       nomi:
         contract: apps/nomi/.env.example
-        stage_files: [apps/nomi/.env.local, apps/nomi/.env.staging]   # per-stage dotenvx files
+        stage_files: [apps/nomi/.env, apps/nomi/.env.staging]   # local → .env · staging → .env.staging (plain, gitignored)
       admin:
         contract: apps/admin/.env.example
-        stage_files: [apps/admin/.env.local, apps/admin/.env.staging]
+        stage_files: [apps/admin/.env, apps/admin/.env.staging]
       nomi-mobile:
         contract: apps/nomi-mobile/.env.example             # EXPO_PUBLIC_* only — NON-SECRET by design
-        stage_files: [apps/nomi-mobile/.env.local, apps/nomi-mobile/.env.staging]
+        stage_files: [apps/nomi-mobile/.env, apps/nomi-mobile/.env.staging]
     root_contract: .env.example                              # workspace-root (vitest loads it)
 
 # Human-provisioned via infractl (NOT agents). The .env.infra it emits OVERRIDES
@@ -50,13 +50,13 @@ infra:
   redis:    { key_prefix: ins_ }
   overrides: [DB_HOST, DB_PORT, DB_NAME, DB_USERNAME, DB_PASSWORD, DATABASE_URL, REDIS_URL]
 
-# Secret model. Injector = dotenvx (AWS hosts staging/prod; Railway not in play).
-# Worktree-portable: encrypted .env.<stage> is committed (safe) so it travels to
-# every worktree; only .env.keys (decrypt key, gitignored, host-only) is wired in.
-# Human maintains the VALUES per stage; agents run `dotenvx run -- <cmd>` and
-# never decrypt/print. Mobile holds NO secrets (Expo inlines EXPO_PUBLIC_* → BE/gateway holds keys).
+# Secret model (conductor flow, no dotenvx). Each app's stage env file is a PLAIN,
+# gitignored file the human maintains in the source checkout (local → .env · staging →
+# .env.staging). wire-env COPIES it into each fresh worktree; the app auto-loads it (no
+# injector wrapper). NON-PROD values only — agents RUN env-consuming commands but never
+# print/echo/commit a value. Mobile holds NO secrets (Expo inlines EXPO_PUBLIC_* → BE/gateway holds keys).
 secrets:
-  injector: dotenvx
+  delivery: copy-root-env            # gitignored per-app .env copied root→worktree (no dotenvx)
   values_owner: human
   required_local:                    # must resolve for local-stage work, else BLOCK
     insurtech-service: [OPENAI_API_KEY, AUTH_JWT_ACCESS_SECRET, AUTH_JWT_REFRESH_SECRET]

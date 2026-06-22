@@ -18,7 +18,7 @@ code that reads `libs/types/src/api.gen.ts`.
 - `gen:api` needs the BE reachable: `USER_API_URL` / `ADMIN_API_URL` (default `http://localhost:3333`).
 
 ## Builder steps (when you changed the BE surface)
-1. Start the local BE: `dotenvx run -f .env.local -- yarn start` (→ :3333).
+1. Start the local BE: `yarn start` (→ :3333) — the worktree's copied `.env` auto-loads.
 2. Regenerate FE types: `USER_API_URL=http://localhost:3333 ADMIN_API_URL=http://localhost:3333 yarn gen:api`.
 3. Fix every FE consumer the new types break; `nx typecheck` must be clean.
 4. **Commit the regenerated `libs/types/*.gen.ts`** in the same branch. Never hand-edit generated files.

@@ -95,10 +95,13 @@ def main():
     appcfg = repo["apps"][app]
     contract = appcfg.get("contract", "")
     stage_files = appcfg.get("stage_files") or []
-    # pick the stage file whose basename is `.env.<stage>`; else the single FE `.env`
+    # Stage→filename: local stage is the plain `.env`; other stages are `.env.<stage>`
+    # (e.g. staging → `.env.staging`). These are gitignored, human-maintained, and
+    # COPIED root→worktree by wire-env (conductor flow; no dotenvx encryption).
+    target = ".env" if stage == "local" else f".env.{stage}"
     stagefile = ""
     for sf in stage_files:
-        if os.path.basename(sf) == f".env.{stage}":
+        if os.path.basename(sf) == target:
             stagefile = sf
             break
     if not stagefile and stage_files:

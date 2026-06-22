@@ -174,9 +174,9 @@ Per-agent detail doc: full **spec cards** for each of the 5 agents (name, runtim
 
 **B. How an agent starts work in a worktree (the env wiring)**
 1. `scripts/new-worktree.sh <project> <app> <KEY> <slug> <train> [stage]` (`project`=slug e.g. `aaa`; `app` from the manifest) → worktree `<local-path>/wt/<KEY>-<app>` on `feat/<KEY>-<slug>` from the train, `yarn install` (shared cache).
-2. **Env wired + VALIDATED by `wire-env.sh`** (DECISIONS #16): **backend** gets `infractl env --write` → `.env.infra` (dedicated DB + Redis prefix; DB is human-provisioned, NOT created here). Secrets via dotenvx. **Hard gate:** required vars must resolve against the surface's `.env.example`/`.env.sample` or it BLOCKS by name.
-3. **Secrets** (NON-PROD) come from the **injector** at run time (`dotenvx/doppler/op run -- <cmd>`) — never a committed file; agents use, never read, values.
-4. Agent runs the app (FE `nx dev <app>` · BE `yarn start` → :3333), works one AC at a time, then **local QA green → Reviewer → PR to train** (§5).
+2. **Env wired + VALIDATED by `wire-env.sh`** (DECISIONS #16): **backend** gets `infractl env --write` → `.env.infra` (dedicated DB + Redis prefix; DB is human-provisioned, NOT created here). The app's plain, gitignored `.env` (local stage) is **copied** from the source checkout into the worktree. **Hard gate:** required vars must resolve against the surface's `.env.example`/`.env.sample` or it BLOCKS by name.
+3. **Secrets** (NON-PROD) live in that copied `.env` (conductor flow — no dotenvx/injector); the app auto-loads it. Agents RUN env-consuming commands but never print/commit a value.
+4. Agent runs the app (FE `nx dev <app>` · BE `yarn start` → :3333; auto-loads `.env`), works one AC at a time, then **local QA green → Reviewer → PR to train** (§5).
 5. **Concurrency:** FE worktrees run in parallel; **backend serialized** — one services worktree at a time (all share the project DB). `new-worktree.sh` prints the warning.
 
 ## Resolved decisions (2026-06-20)

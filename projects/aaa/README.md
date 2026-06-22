@@ -32,7 +32,7 @@ engine (`../../infra/`). Everything bounded to this project lives here.
 
 ## Human-owned, one-time
 - Provision the shared DB: `infractl up` + `infractl db-create infina-insurance-partner-services`.
-- Adopt dotenvx per repo (encrypt `.env.local`/`.env.staging`, keep `.env.keys` gitignored on host).
+- Create each app's plain, gitignored `.env` (local) with NON-PROD dev values in the repo checkout (+ `.env.staging` if staging repro is needed). `wire-env` copies them into worktrees.
 - Keep `project.yml` `secrets.required_local` in step with each repo's `.env.example`/`.env.sample`.
 
 ## Stand up the squad in Multica

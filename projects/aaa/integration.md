@@ -21,11 +21,12 @@ cd ~/Work/setup/infra && ./infractl up
 # 2. dedicated DB for this project
 ./infractl db-create infina-insurance-partner-services        # -> db infina_insurance_partner_services
 
-# 3. inject the connection contract into the worktree's .env.local (the file the app reads)
+# 3. inject the connection contract into the repo's .env (local stage — the plain, gitignored file the app reads)
 #    Run ONCE — `>>` appends, so re-running duplicates the vars. To refresh, delete the old
 #    infra block first, or use `--write` to drop a standalone .env.infra and merge it by hand.
+#    (In a worktree, wire-env writes .env.infra separately — this step is for the root checkout.)
 ./infractl env infina-insurance-partner-services >> \
-  ~/Work/infina-ai/aaa/infina-insurance-partner-services/.env.local
+  ~/Work/infina-ai/aaa/infina-insurance-partner-services/.env
 
 # 4. run migrations against it (from the repo)
 cd ~/Work/infina-ai/aaa/infina-insurance-partner-services

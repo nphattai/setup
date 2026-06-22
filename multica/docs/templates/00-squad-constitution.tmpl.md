@@ -63,11 +63,12 @@ to **Blocked**, `@mention` RS-Lead (or the human owner), and STOP. Never guess a
 
 ## Secret & env management (so QA/debug isn't blocked)
 - **Human provisions** infra + secrets: shared DB via `infractl` (human-created — agents NEVER
-  `infractl db-create`/`wipe`), and per-stage **dotenvx**-encrypted env (`.env.local`/`.env.staging`)
+  `infractl db-create`/`wipe`), and a per-app **plain, gitignored `.env`** (local) / `.env.staging`
   with NON-PROD/dev values. **Agents never receive prod secrets; never touch `.env.prod`.**
-- **Injector = dotenvx.** Run apps/tests via `dotenvx run -f .env.<stage> -- <cmd>` (stage defaults to
-  `local`). **USE** secrets via the wrapper; **never** decrypt-to-inspect, print, log, or commit a
-  value. `.env.keys` is host-only.
+- **Env delivery = copy per worktree (no dotenvx).** `wire-env` copies the app's `.env` from the
+  source checkout into each worktree; the app **auto-loads** it — just run `<cmd>` (`nx dev`/`yarn
+  start`), no injector wrapper. **USE** secrets by running env-consuming commands; **never** `cat`/
+  print/log/commit a value or an env file.
 - **Env completeness is a HARD GATE.** Before working, the worktree's env must satisfy the surface's
   contract (`.env.example`/`.env.sample`); `scripts/wire-env.sh <slug> <app> <wt> [stage]` validates it
   and fails closed. Any **missing/empty required var → report by NAME only**, set Blocked, @mention the

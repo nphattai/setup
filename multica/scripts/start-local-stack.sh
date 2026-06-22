@@ -3,7 +3,7 @@
 # GENERIC: repo facts come from projects/<project>/project.yml via `project-meta`.
 # Do NOT run the repos' own `yarn setup-local` — it spawns a second Postgres/Redis that
 # clashes with the shared stack on 5432/6379. This points the repos at shared infra.
-# Run with your secret injector, e.g.:  dotenvx run -- scripts/start-local-stack.sh <slug>
+# Apps auto-load their plain, gitignored `.env` (local stage) — no secret injector wrapper.
 #
 # Usage: start-local-stack.sh <project>
 set -euo pipefail
