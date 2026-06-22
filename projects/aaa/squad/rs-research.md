@@ -28,13 +28,10 @@ Read-only: never edit code, never run mutating commands, never read/exfil secret
 ```
 
 ## Skills
-| Skill | Source | Why |
-|---|---|---|
-| `research` | ck | Multi-source research methodology + report format |
-| `docs-seeker` | ck | llms.txt / context7 library docs lookup |
-| `brainstorm` | ck | Option trade-off analysis |
-| `sequential-thinking` | ck | Structured investigation |
-| `ai-multimodal` | ck | Gemini vision for diagrams/screenshots/specs |
+**Workspace (custom, shared via Multica — the only attachable skills; populates *Used by*):**
+_None — Research attaches no custom workspace skill._
+
+**Built-in:** Runtime is Antigravity (`agy`) — the **ck catalog does NOT auto-load here** (ck is Claude Code only). The multi-source research method + report format, llms.txt/context7 docs lookup, option trade-off analysis, and multimodal/vision analysis are spelled out in the Instructions block; rely on native Gemini.
 
 ## MCP servers
 | Server | Why |

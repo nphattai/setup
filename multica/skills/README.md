@@ -4,6 +4,18 @@ Repo-local skills the squad cards reference (not in the ck catalog). Each is a p
 (frontmatter `name` + `description`, then when-to-use + steps). Following the template-vs-project
 split: **generic skills live here**; **project-specific skills live under `projects/<slug>/skills/`.**
 
+## Workspace skills vs built-in ck skills
+These authored skills are the **only ones uploaded to the Multica workspace** ("any agent in this
+workspace can use"). Each card's `## Skills` table lists just the custom skills its agent **attaches**
+in Multica — that attachment is what populates the workspace **Used by** column. Every authored skill
+is attached to ≥1 agent below, so none stay *unused*.
+
+The **ck-catalog** skills (`ck-plan`, `cook`, `code-review`, …) are NOT workspace skills — they
+**auto-load in the Claude Code runtime**, so only **RS-Lead** and **RS-Builder** (both Claude Code)
+use them; their cards name the relevant ones as awareness in the Instructions, not as attached skills.
+RS-Reviewer (OpenCode), RS-QA (Codex), and RS-Research (Antigravity) have no ck catalog — they rely on
+the workspace skill(s) above + native runtime ability.
+
 ## Generic (here — reusable across projects)
 | Skill | Used by | Purpose |
 |---|---|---|
