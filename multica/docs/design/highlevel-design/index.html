@@ -1,0 +1,3159 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Engines (infra · agent-memory), the Multica squad template, and concrete projects — one navigable, diagrammed reference.">
+      
+      
+      
+        <link rel="canonical" href="https://nphattai.github.io/setup/multica/docs/design/highlevel-design/">
+      
+      
+        <link rel="prev" href="../../../">
+      
+      
+        <link rel="next" href="../runtime-and-capacity/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>High-level design - setup — multi-agent dev workspace</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#multica-agent-squad-high-level-design-blueprint" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="setup — multi-agent dev workspace" class="md-header__button md-logo" aria-label="setup — multi-agent dev workspace" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            setup — multi-agent dev workspace
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              High-level design
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nphattai/setup" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nphattai/setup
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../ARCHITECTURE/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../infra/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infra (engine)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Multica (template)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../agent-memory/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Agent Memory (engine)
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../projects/aaa/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Projects
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="setup — multi-agent dev workspace" class="md-nav__button md-logo" aria-label="setup — multi-agent dev workspace" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    setup — multi-agent dev workspace
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nphattai/setup" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nphattai/setup
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ARCHITECTURE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../infra/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infra (engine)
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infra (engine)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../infra/docs/design/highlevel-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High-level design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../infra/docs/decisions/0001-shared-instance-logical-isolation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0001 — shared instance, logical isolation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Multica (template)
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Multica (template)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High-level design
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    High-level design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-project-context-aaa-example-verified-from-repos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Project context (aaa example — verified from repos)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-team-architecture-lean-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Team architecture — lean 5
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-orchestration-hybrid-planning-hub-kanban-pull-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Orchestration — hybrid (planning hub + kanban-pull execution)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-governance-3-layer-instruction-model-dry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Governance — 3-layer instruction model (DRY)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-workflow-gates-per-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Workflow + gates (per feature)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-git-flow-versioning-release-train-locked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Git flow + versioning (release-train, locked)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-qa-surface-map-grounded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. QA surface map (grounded)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-top-risks-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Top risks + mitigations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-phase-2-growth-triggers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Phase-2 growth triggers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-requirement-intake-worktree-env-execution-mechanics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Requirement intake + worktree env (execution mechanics)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolved-decisions-2026-06-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved decisions (2026-06-20)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-remaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open questions (remaining)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../runtime-and-capacity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runtime & capacity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../env-and-execution-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Env & execution flow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/DECISIONS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/README.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Legend & how to instantiate
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/00-squad-constitution.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squad constitution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/rs-lead.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Lead
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/rs-builder.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Builder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/rs-reviewer.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Reviewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/rs-qa.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../templates/rs-research.tmpl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Research
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../skills/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skills
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_5" id="__nav_4_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Skills
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../skills/builder-dev-loop/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    builder-dev-loop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../skills/root-cause-first/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    root-cause-first
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../skills/safe-refactor/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    safe-refactor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../env/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Env notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_8" id="__nav_4_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../archive/multica-working-model-design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working-model design (superseded)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../archive/multica-infina-insurance-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infina insurance setup (superseded)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../agent-memory/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Memory (engine)
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Agent Memory (engine)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/runbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/llm-backend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM backend
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/mcp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MCP shim
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/decisions/0001-use-antigravity-oauth-via-cliproxyapi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0001 — Antigravity OAuth via CLIProxyAPI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/decisions/0002-remove-gemini-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0002 — remove gemini-proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/decisions/0003-claudeprobe-and-worktree-hook-fixes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0003 — ClaudeProbe & worktree hook fixes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../agent-memory/docs/decisions/0004-relocate-setup-and-fresh-store/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR 0004 — relocate setup & fresh store
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Projects
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Projects
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../projects/aaa/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    aaa (first instance)
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_1" id="__nav_6_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    aaa (first instance)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infra integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../projects/aaa/squad/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squad
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_1_3" id="__nav_6_1_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_1_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Squad
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/00-squad-constitution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Constitution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/rs-lead/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Lead
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/rs-builder/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Builder
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/rs-reviewer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Reviewer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/rs-qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-QA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/squad/rs-research/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RS-Research
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_1_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_1_4" id="__nav_6_1_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Skills
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_1_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_1_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Skills
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/skills/inf-api-contract/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    inf-api-contract
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../projects/aaa/skills/inf-e2e-mobile-maestro/SKILL/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    inf-e2e-mobile-maestro
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-project-context-aaa-example-verified-from-repos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Project context (aaa example — verified from repos)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-team-architecture-lean-5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Team architecture — lean 5
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-orchestration-hybrid-planning-hub-kanban-pull-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Orchestration — hybrid (planning hub + kanban-pull execution)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-governance-3-layer-instruction-model-dry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Governance — 3-layer instruction model (DRY)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-workflow-gates-per-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Workflow + gates (per feature)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-git-flow-versioning-release-train-locked" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Git flow + versioning (release-train, locked)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-qa-surface-map-grounded" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. QA surface map (grounded)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-top-risks-mitigations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Top risks + mitigations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-phase-2-growth-triggers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Phase-2 growth triggers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-next-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Next step
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-requirement-intake-worktree-env-execution-mechanics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Requirement intake + worktree env (execution mechanics)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolved-decisions-2026-06-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolved decisions (2026-06-20)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#open-questions-remaining" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Open questions (remaining)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/nphattai/setup/edit/main/multica/docs/design/highlevel-design.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="multica-agent-squad-high-level-design-blueprint">Multica Agent Squad — High-Level Design (blueprint)<a class="headerlink" href="#multica-agent-squad-high-level-design-blueprint" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Generic squad blueprint.</strong> Concrete identifiers (repos, apps, paths, squad name, tracker key)
+are illustrated with the <strong><code>aaa</code></strong> first instance — see <code>../../../projects/aaa/</code>. To reuse for
+another project, read <code>&lt;repo-fe&gt;</code> / <code>&lt;repo-be&gt;</code> / <code>&lt;fe-apps&gt;</code> / <code>&lt;be-app&gt;</code> / <code>&lt;squad&gt;</code> as that
+project's values from <code>projects/&lt;slug&gt;/project.yml</code> (legend: <code>../templates/README.tmpl.md</code>).
+Per-agent spec cards: <code>../templates/rs-*.tmpl.md</code> (rendered per project under <code>squad/</code>). Created 2026-06-20.
+Supersedes the high-level parts of <code>../archive/*</code> (those remain as supporting/runtime detail).</p>
+</blockquote>
+<h2 id="1-project-context-aaa-example-verified-from-repos">1. Project context (aaa example — verified from repos)<a class="headerlink" href="#1-project-context-aaa-example-verified-from-repos" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Repo</th>
+<th>Stack</th>
+<th>Apps</th>
+<th>Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FE</td>
+<td><code>RealStake/infina-insurance-partner-webapp</code> (<code>@org/source</code>)</td>
+<td>Nx + yarn, Next.js, React Native</td>
+<td><strong><code>nomi</code></strong> (user web), <strong><code>admin</code></strong> (admin web), <strong><code>nomi-mobile</code></strong> (RN)</td>
+<td>vitest (unit), <strong>Playwright present</strong> (web E2E), <strong>Maestro absent</strong> (mobile E2E = gap)</td>
+</tr>
+<tr>
+<td>BE</td>
+<td><code>RealStake/infina-insurance-partner-services</code></td>
+<td>Nx + yarn, NestJS, Docker</td>
+<td><code>insurtech-service</code></td>
+<td>jest</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cross-repo contract:</strong> BE↔FE is codegen'd — <code>yarn gen:api</code> (openapi-typescript) regenerates <code>libs/types/src/api.gen.ts</code> from BE OpenAPI. Any BE API change ⇒ regen + verify FE consumers.</p>
+<p><strong>Existing agent infra (reuse, don't duplicate):</strong> both repos ship <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.claude/rules/*</code>, <code>opencode.json</code>. Squad constitution <strong>references</strong> these as the source of truth for dev rules / workflows.</p>
+<p><strong>Issue tracking — Jira is single source of truth.</strong> Team already uses Jira (<code>SHP-####</code> keys; branches prefixed with the Jira key). Multica is the agents' <em>execution lane</em>, NOT a second tracker:
+- Jira key is the canonical handle everywhere — branch <code>feat/SHP-####-&lt;slug&gt;</code>, PR title, Multica issue title (<code>SHP-####: …</code>).
+- RS-Lead intakes a Jira ticket → creates thin Multica sub-issues referencing the key → status pushed back to Jira.
+- <strong>Wire Atlassian MCP to RS-Lead</strong> so it reads Jira tickets directly + posts status/PR-link comments back. No manual double-entry. No two-way board sync.</p>
+<h2 id="2-team-architecture-lean-5">2. Team architecture — lean 5<a class="headerlink" href="#2-team-architecture-lean-5" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Role</th>
+<th>Runtime</th>
+<th>Model / auth</th>
+<th>Standing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RS-Lead</code></td>
+<td>leader</td>
+<td>Claude Code</td>
+<td>Claude Max 5x (Opus for design)</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>RS-Builder</code></td>
+<td>builder</td>
+<td>Claude Code</td>
+<td>Claude Max 5x (<strong>Opus</strong>, Sonnet fallback)</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>RS-Reviewer</code></td>
+<td>code-reviewer</td>
+<td>OpenCode CLI</td>
+<td>OpenCode Go → Qwen 3.7 Max</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>RS-QA</code></td>
+<td>qa</td>
+<td>Codex</td>
+<td>ChatGPT Plus (GPT-5.x)</td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>RS-Research</code></td>
+<td>research</td>
+<td>Antigravity CLI (<code>agy</code>)</td>
+<td>Gemini 3.x via Antigravity (replaces deprecated Gemini CLI)</td>
+<td>on-demand</td>
+</tr>
+</tbody>
+</table>
+<p>~$130/mo (Max $100 + Go $10 + Plus $20 + Ultra existing). Grows into Quang's specialist model in Phase 2.</p>
+<h2 id="3-orchestration-hybrid-planning-hub-kanban-pull-execution">3. Orchestration — hybrid (planning hub + kanban-pull execution)<a class="headerlink" href="#3-orchestration-hybrid-planning-hub-kanban-pull-execution" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    H["👤 Human&lt;br/&gt;intake + 3 gates"]
+    L["&lt;b&gt;RS-Lead&lt;/b&gt;&lt;br/&gt;planning hub + gatekeeper&lt;br/&gt;PRD → design → slice → assign train"]
+    B["&lt;b&gt;RS-Builder&lt;/b&gt;&lt;br/&gt;code 1 AC at a time&lt;br/&gt;unit green · push feat (no PR)"]
+    Q["&lt;b&gt;RS-QA&lt;/b&gt;&lt;br/&gt;local E2E per feat&lt;br/&gt;vs shared infra"]
+    R["&lt;b&gt;RS-Reviewer&lt;/b&gt;&lt;br/&gt;static diff review"]
+
+    H -- "issue + resources" --&gt; L
+    L -- "GATE 1: design approved" --&gt; B
+    B --&gt; Q
+    Q -- "bug → back to Builder" --&gt; B
+    Q --&gt; R
+    R -- "approve" --&gt; L
+    L -- "sole funnel: open+merge feat→train&lt;br/&gt;(QA✓ · Review✓ · checks✓)" --&gt; H
+
+    classDef lead fill:#ede7f6,stroke:#5e35b1,color:#311b92;
+    class L lead;</code></pre>
+<p><strong>Planning hub + kanban-pull execution.</strong> RS-Lead is NOT a per-PR dispatcher: it plans, slices, and
+guards the gates. Execution flows pull-style Builder → QA → Reviewer → <strong>Lead (sole funnel into the
+train)</strong>. Lead re-engages only at gates → saves Claude Max quota, removes the bottleneck.</p>
+<h2 id="4-governance-3-layer-instruction-model-dry">4. Governance — 3-layer instruction model (DRY)<a class="headerlink" href="#4-governance-3-layer-instruction-model-dry" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TB
+    L1["&lt;b&gt;L1 · SQUAD CONSTITUTION&lt;/b&gt; — Multica Instructions tab (all agents inherit)&lt;br/&gt;&lt;small&gt;gates · git constitution · DoD · escalation · #quot;obey repo .claude/rules + AGENTS.md/CLAUDE.md#quot;&lt;/small&gt;"]
+    L2["&lt;b&gt;L2 · ROLE PROMPT&lt;/b&gt; — per agent, the specialised lens"]
+    L3["&lt;b&gt;L3 · RUNTIME / MODEL&lt;/b&gt; — per agent, auth + model"]
+    L1 --&gt; L2 --&gt; L3
+    classDef l1 fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    class L1 l1;</code></pre>
+<p>Constitution points to repo rules rather than restating them (single source of truth).</p>
+<h2 id="5-workflow-gates-per-feature">5. Workflow + gates (per feature)<a class="headerlink" href="#5-workflow-gates-per-feature" title="Permanent link">&para;</a></h2>
+<p><strong>QA moved LEFT (2026-06-21):</strong> E2E now runs <strong>locally in the worktree against shared infra and must be green BEFORE the PR opens to the train</strong> — not post-staging. Merging to the train already implies QA-passed code. Post-staging is integration smoke only.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Step</th>
+<th>Who</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>PRD + design + slice sub-issues, assign train (brief + resources attached, see §11)</td>
+<td>RS-Lead → <strong>GATE 1: human approves design</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>new-worktree.sh</code> → <code>feat/&lt;TICKET&gt;-&lt;slug&gt;</code> from train, infra env injected → code one AC at a time → unit green → <strong>push feat branch (no PR)</strong></td>
+<td>RS-Builder</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Local QA per feat</strong> in the worktree vs shared infra (web Playwright / backend jest / mobile Maestro). Bug → back to Builder. Green-per-feat = required to enter the train.</td>
+<td>RS-QA</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Static review (clean diff)</td>
+<td>RS-Reviewer → approve</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Opens</strong> PR <code>feat → release-&lt;slug&gt;</code> <strong>and merges</strong> it, after QA-green-per-feat + Reviewer-approved + checks green</td>
+<td><strong>RS-Lead — sole funnel into the train</strong></td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>GATE 2: human</strong> merges <code>release-&lt;slug&gt;</code> → <code>release</code> → staging deploy</td>
+<td>human</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Pre-prod: deploy train branch ALONE → integration smoke (since <code>release</code> is mixed)</td>
+<td>RS-QA / human</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>GATE 3: human</strong> merges <code>release-&lt;slug&gt;</code> → <code>master</code> → tag + version bump</td>
+<td>human</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-git-flow-versioning-release-train-locked">6. Git flow + versioning (release-train, locked)<a class="headerlink" href="#6-git-flow-versioning-release-train-locked" title="Permanent link">&para;</a></h2>
+<p><pre class="mermaid"><code>flowchart TD
+    FEAT["feat/SHP-####-&amp;lt;slug&amp;gt;&lt;br/&gt;&lt;small&gt;cut from train · Builder pushes · Lead merges&lt;/small&gt;"]
+    TRAIN["release-&amp;lt;slug&amp;gt; — TRAIN&lt;br/&gt;&lt;small&gt;from master · bundles features shipping together&lt;/small&gt;"]
+    SANDBOX["release — long-lived QA sandbox&lt;br/&gt;&lt;small&gt;disposable · never → master&lt;/small&gt;"]
+    STAGING["staging deploy"]
+    MASTER["master — prod&lt;br/&gt;&lt;small&gt;tag vX.Y.Z (BE+web+mobile synced)&lt;/small&gt;"]
+    HOTFIX["hotfix/* (urgent prod fix)"]
+
+    MASTER -. "cut" .-&gt; TRAIN
+    FEAT -- "PR (agent-merged, low risk)" --&gt; TRAIN
+    TRAIN -- "PR · ✋ GATE 2 (human)" --&gt; SANDBOX
+    SANDBOX --&gt; STAGING
+    TRAIN -- "isolated smoke → ✋ GATE 3 (human)&lt;br/&gt;+ version bump" --&gt; MASTER
+    HOTFIX -- "→ master, back-merged into live trains" --&gt; MASTER
+
+    classDef gate fill:#fff3e0,stroke:#fb8c00,color:#e65100;
+    classDef prod fill:#ffebee,stroke:#c62828,color:#b71c1c;
+    class SANDBOX,STAGING gate;
+    class MASTER prod;</code></pre>
+- <strong>Mostly-bundled + hotfix exception</strong>: normal work via trains; urgent prod fix <code>hotfix/*</code>→<code>master</code>, back-merged into live trains.
+- <strong>Versioning</strong>: single synced tag <code>vX.Y.Z</code> across all 3 repos at prod merge; <strong>deploy async</strong> (web/BE now, mobile on app-store clock); <strong>BE backward-compatible with previous mobile version</strong> (non-negotiable).
+- <code>release</code> = disposable QA sandbox, never→master; reset from <code>master</code> periodically (human/CI), never agents.
+- Trains kept small/short-lived; synced via periodic <code>master</code>→train merge (Builder/Lead/CI).</p>
+<p><strong>Train naming:</strong> <code>release-&lt;slug&gt;</code> (per-epic/feature-bundle slug), cut from <code>master</code>. Coexists with existing weekly trains (<code>release-w/NN</code>) and <code>release-mobile</code>. Lead names the train + assigns each sub-issue to it.</p>
+<p><strong>Agent git constitution:</strong>
+Builders only cut <code>feat/SHP-####-&lt;slug&gt;</code> from the <strong>assigned train</strong>, commit (conventional), and <strong>push their own branch</strong> — they do <strong>NOT</strong> open the feat→train PR. <strong>RS-Lead is the sole funnel into a train:</strong> Lead opens the <code>feat→release-&lt;slug&gt;</code> PR and merges it once QA is green-per-feat + Reviewer-approved + checks green (a lightweight train-entry check, not a re-review). Agents <strong>never</strong> open/merge the train PR, merge to <code>release</code>/<code>master</code>, force-push, delete shared branches, or touch another agent's branch. One sub-issue = one branch. Multi-repo feature = same branch name in both repos, two PRs (both opened by Lead), promoted at same gates.</p>
+<blockquote>
+<p>⚠️ <strong>Identity gap (interim):</strong> no dedicated bot account yet — agents run under the <strong>owner's personal GitHub account</strong>. This removes the hard "agent physically can't merge master" safety net. Compensating controls REQUIRED until a bot account exists:
+- Branch-protect <code>master</code> + <code>release</code>: require PR + ≥1 review + passing checks, <strong>block direct/force-push</strong>, and <strong>enable "Include administrators / Do not allow bypassing"</strong> — so even the owner's account is forced through the gates.
+- Tag agent commits with a trailer (e.g. <code>[agent:RS-Builder]</code> / <code>Co-authored-by:</code>) to distinguish agent vs human work.
+- Phase-0 follow-up: provision a fine-grained PAT / service account scoped to only these 2 repos, excluded from merging protected branches.</p>
+</blockquote>
+<h2 id="7-qa-surface-map-grounded">7. QA surface map (grounded)<a class="headerlink" href="#7-qa-surface-map-grounded" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>App</th>
+<th>Tool</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user web</td>
+<td><code>apps/nomi</code></td>
+<td>Playwright (via @nx-playwright)</td>
+<td>✅ reuse</td>
+</tr>
+<tr>
+<td>admin web</td>
+<td><code>apps/admin</code></td>
+<td>Playwright</td>
+<td>✅ reuse</td>
+</tr>
+<tr>
+<td>RN mobile</td>
+<td><code>apps/nomi-mobile</code></td>
+<td><strong>Maestro (local sim/emulator)</strong></td>
+<td>⚠️ scaffold (absent) — first QA task</td>
+</tr>
+<tr>
+<td>backend</td>
+<td><code>insurtech-service</code></td>
+<td>jest + Docker repro</td>
+<td>✅ reuse</td>
+</tr>
+</tbody>
+</table>
+<p>QA host = this Mac (Xcode sim + Android emulator for mobile). <strong>QA proves bugs, Builder fixes.</strong> Reuse existing Playwright/jest; only scaffold the Maestro gap.</p>
+<p><strong>Mobile QA is local + pre-merge.</strong> RS-QA runs Maestro on a <strong>local</strong> build (sim/emulator) and it must be <strong>green before the feature is merged</strong>. Merging is what triggers the <strong>EAS build downstream</strong> — so no EAS build is spent on un-QA'd code. EAS/app-store release stays a post-merge, human/CI concern, not part of agent QA.</p>
+<h2 id="8-top-risks-mitigations">8. Top risks + mitigations<a class="headerlink" href="#8-top-risks-mitigations" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Claude Max weekly cap (Lead+Builder <strong>both Opus</strong>, share one login) → <strong>Builder auto-falls-back to Sonnet</strong> under cap pressure; keep trains small; if it walls weekly, give Builder its own Max login (+$100).</li>
+<li>Qwen reviewer misses subtle TS bugs → rubric + <strong>mandatory human review on any <code>api.gen.ts</code>/contract change</strong>.</li>
+<li>QA 4 surfaces / mobile sims slow → serialize; split <code>RS-QA-Mobile</code> if it bottlenecks (Phase 2).</li>
+<li>Train all-or-nothing / drift → small trains, periodic <code>master</code>→train sync, descope = revert merge commit.</li>
+<li>Staging mix ≠ prod → mandatory isolated train-branch smoke before GATE 3.</li>
+<li>Nx monorepo context blow-out (200K/agent) → scope agents to the specific app (<code>nx affected</code>, target one <code>apps/*</code>), never "whole monorepo".</li>
+<li>Single-Mac daemon → keep-awake (caffeinate); if Mac sleeps, squad dies.</li>
+</ol>
+<h2 id="9-phase-2-growth-triggers">9. Phase-2 growth triggers<a class="headerlink" href="#9-phase-2-growth-triggers" title="Permanent link">&para;</a></h2>
+<ul>
+<li>PR volume high / reviewer blind spots → split <code>RS-Reviewer</code> into contract / architecture / orchestration lenses (Quang model).</li>
+<li>Mobile QA bottleneck → dedicated <code>RS-QA-Mobile</code>.</li>
+<li>Stuck-task toil → add <code>RS-Monitor</code> watchdog.</li>
+<li>24/7 throughput → move GPT side to API/cliproxy (subs won't sustain Quang-scale 447M tok/mo).</li>
+</ul>
+<h2 id="10-next-step">10. Next step<a class="headerlink" href="#10-next-step" title="Permanent link">&para;</a></h2>
+<p>Per-agent detail doc: full <strong>spec cards</strong> for each of the 5 agents (name, runtime, model, complete system prompt aligned to repo <code>.claude/rules</code>/<code>AGENTS.md</code>, repo+app scope, branch policy, escalation, I/O contract) + the <strong>squad constitution full text</strong> + the Multica setup sequence. Then <code>/ck:plan</code>.</p>
+<h2 id="11-requirement-intake-worktree-env-execution-mechanics">11. Requirement intake + worktree env (execution mechanics)<a class="headerlink" href="#11-requirement-intake-worktree-env-execution-mechanics" title="Permanent link">&para;</a></h2>
+<p><strong>Hierarchy:</strong> shared infra (1 PG + 1 Redis) → many <strong>projects</strong> (each = dedicated DB + Redis prefix) → each project has <strong>1 Multica squad</strong> → squad = 5 agents. <code>aaa</code> = project at <code>~/Work/infina-ai/aaa</code> (2 repos) → squad <code>mica</code>.</p>
+<p><strong>A. How RS-Lead receives a requirement + resources</strong>
+- <strong>Jira</strong> ticket <code>SHP-####</code> is the entry (Atlassian MCP — Lead reads it directly).
+- <strong>Design</strong> → Figma MCP (Lead pulls design context/screens). <strong>Partner docs</strong> → Confluence (Atlassian MCP).
+- <strong>Ad-hoc local files</strong> (HTML mocks, partner PDFs not in Jira/Confluence) → drop in <strong><code>~/Work/infina-ai/&lt;proj&gt;/.squad/inbox/SHP-####/</code></strong>. Lead reads them and <strong>cites the brief path + resource links in each sub-issue tech spec</strong> so downstream agents have everything without re-asking.
+- Lead → PRD + design + slices → thin Multica sub-issues (each cites AC-ids, the train, and the brief location) → <strong>GATE 1</strong>.</p>
+<p><strong>B. How an agent starts work in a worktree (the env wiring)</strong>
+1. <code>scripts/new-worktree.sh &lt;project&gt; &lt;app&gt; &lt;KEY&gt; &lt;slug&gt; &lt;train&gt; [stage]</code> (<code>project</code>=slug e.g. <code>aaa</code>; <code>app</code> from the manifest) → worktree <code>&lt;local-path&gt;/wt/&lt;KEY&gt;-&lt;app&gt;</code> on <code>feat/&lt;KEY&gt;-&lt;slug&gt;</code> from the train, <code>yarn install</code> (shared cache).
+2. <strong>Env wired + VALIDATED by <code>wire-env.sh</code></strong> (DECISIONS #16): <strong>backend</strong> gets <code>infractl env --write</code> → <code>.env.infra</code> (dedicated DB + Redis prefix; DB is human-provisioned, NOT created here). The app's plain, gitignored <code>.env</code> (local stage) is <strong>copied</strong> from the source checkout into the worktree. <strong>Hard gate:</strong> required vars must resolve against the surface's <code>.env.example</code>/<code>.env.sample</code> or it BLOCKS by name.
+3. <strong>Secrets</strong> (NON-PROD) live in that copied <code>.env</code> (conductor flow — no dotenvx/injector); the app auto-loads it. Agents RUN env-consuming commands but never print/commit a value.
+4. Agent runs the app (FE <code>nx dev &lt;app&gt;</code> · BE <code>yarn start</code> → :3333; auto-loads <code>.env</code>), works one AC at a time, then <strong>local QA green → Reviewer → PR to train</strong> (§5).
+5. <strong>Concurrency:</strong> FE worktrees run in parallel; <strong>backend serialized</strong> — one services worktree at a time (all share the project DB). <code>new-worktree.sh</code> prints the warning.</p>
+<h2 id="resolved-decisions-2026-06-20">Resolved decisions (2026-06-20)<a class="headerlink" href="#resolved-decisions-2026-06-20" title="Permanent link">&para;</a></h2>
+<ol>
+<li>✅ <strong>Jira = source of truth.</strong> <code>SHP-####</code> key drives branch/PR/Multica-issue naming. Atlassian MCP wired to RS-Lead. No two-way board sync.</li>
+<li>✅ <strong>Trains named <code>release-&lt;slug&gt;</code></strong> (per-epic), cut from master; weekly <code>release-w/NN</code> coexist.</li>
+<li>⚠️ <strong>Interim identity: owner's personal GitHub account</strong> (no bot yet). Compensating controls in §6 are MANDATORY (branch protection incl. administrators + commit trailers). Provision bot account in Phase 0.</li>
+<li>✅ <strong>Mobile QA = local Maestro, green pre-merge.</strong> EAS build triggered downstream of merge; not part of agent QA.</li>
+</ol>
+<h2 id="open-questions-remaining">Open questions (remaining)<a class="headerlink" href="#open-questions-remaining" title="Permanent link">&para;</a></h2>
+<ul>
+<li>None blocking. Phase-0 bot-account provisioning is the only deferred item; design proceeds with the interim controls.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "navigation.tracking", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.action.edit"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

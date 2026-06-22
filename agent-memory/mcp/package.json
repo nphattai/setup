@@ -1,0 +1,14 @@
+{
+  "name": "agentmemory-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "stdio MCP shim over the agentmemory REST API — memory_search + memory_save for any MCP-capable runtime",
+  "bin": {
+    "agentmemory-mcp": "./agentmemory-mcp.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  }
+}

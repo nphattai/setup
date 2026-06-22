@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "agentmemory": {
+      "command": "node",
+      "args": ["/Users/tainguyen/Work/setup/agent-memory/mcp/agentmemory-mcp.mjs"],
+      "env": { "AGENTMEMORY_URL": "http://127.0.0.1:3111" }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "atlassian": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://mcp.atlassian.com/v1/sse"]
+    }
+  }
+}
