@@ -14,7 +14,7 @@ engine (`../../infra/`). Everything bounded to this project lives here.
 ## Facts
 - **Repos** (at `~/Work/infina-ai/aaa`): `infina-insurance-partner-webapp` (FE: `nomi`/`admin`/`nomi-mobile`)
   · `infina-insurance-partner-services` (BE: `insurtech-service`).
-- **Squad:** `infina-insurance-dev` (lean-5: RS-Lead/Builder/Reviewer/QA/Research).
+- **Squad:** `mica` (lean-5: RS-Lead/Builder/Reviewer/QA/Research).
 - **Infra key:** `infina-insurance-partner-services` → DB `infina_insurance_partner_services`, schema `ins`, Redis prefix `ins_`.
 - **Tracker:** Jira, key `SHP-####`. **Trains:** `release-<slug>`.
 

@@ -1,4 +1,4 @@
-# `infina-insurance-dev` — Agent Team Detail (index)
+# `mica` — Agent Team Detail (index)
 
 Per-agent Multica config for the lean-5 squad (the rendered `aaa` instance of `../../../multica/docs/templates/`). Read order: constitution → agent cards. High-level rationale in `../../../multica/docs/design/highlevel-design.md`. Manifest: `../project.yml`.
 
@@ -43,7 +43,7 @@ agents/runtimes can attach them. See `../../../multica/skills/README.md`.
 2. Create Multica **project** `infina-insurance-partner` → attach both GitHub repos.
 3. Paste the **squad constitution** into the squad Instructions tab.
 4. Create the 5 **agents** from their cards (runtime, model, instructions, skills, MCP, env, args).
-5. Create **squad** `infina-insurance-dev`, leader = RS-Lead, add the 5 agents + the human owner (reviewer/member).
+5. Create **squad** `mica`, leader = RS-Lead, add the 5 agents + the human owner (reviewer/member).
 6. Dry-run: assign one real `SHP-####` to RS-Lead, walk it through all 3 gates, tune prompts.
 
 ## Open follow-ups

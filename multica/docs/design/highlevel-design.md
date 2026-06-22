@@ -164,7 +164,7 @@ Per-agent detail doc: full **spec cards** for each of the 5 agents (name, runtim
 
 ## 11. Requirement intake + worktree env (execution mechanics)
 
-**Hierarchy:** shared infra (1 PG + 1 Redis) → many **projects** (each = dedicated DB + Redis prefix) → each project has **1 Multica squad** → squad = 5 agents. `aaa` = project at `~/Work/infina-ai/aaa` (2 repos) → squad `infina-insurance-dev`.
+**Hierarchy:** shared infra (1 PG + 1 Redis) → many **projects** (each = dedicated DB + Redis prefix) → each project has **1 Multica squad** → squad = 5 agents. `aaa` = project at `~/Work/infina-ai/aaa` (2 repos) → squad `mica`.
 
 **A. How RS-Lead receives a requirement + resources**
 - **Jira** ticket `SHP-####` is the entry (Atlassian MCP — Lead reads it directly).

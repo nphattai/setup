@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "agentmemory": {
+      "command": "node",
+      "args": ["/Users/tainguyen/Work/setup/agent-memory/mcp/agentmemory-mcp.mjs"],
+      "env": { "AGENTMEMORY_URL": "http://127.0.0.1:3111" }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    },
+    "nx-services": {
+      "command": "npx",
+      "args": ["-y", "nx-mcp@latest", "/Users/tainguyen/Work/infina-ai/aaa/infina-insurance-partner-services"]
+    },
+    "nx-webapp": {
+      "command": "npx",
+      "args": ["-y", "nx-mcp@latest", "/Users/tainguyen/Work/infina-ai/aaa/infina-insurance-partner-webapp"]
+    }
+  }
+}

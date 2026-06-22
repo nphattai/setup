@@ -72,7 +72,7 @@ secrets:
       - { vars: [ONECLAW_BASE_URL, ONECLAW_AGUI_API_KEY, ONECLAW_AGUI_USER_HMAC_KEY], when: "ONECLAW_ENABLED=true" }
 
 squad:
-  name: infina-insurance-dev
+  name: mica
   agents: [rs-lead, rs-builder, rs-qa, rs-reviewer, rs-research]
   train_pattern: release-<slug>
   inbox: .squad/inbox/<ISSUE-KEY>/   # human drops mockups/partner docs/HTML here; Lead reads from disk

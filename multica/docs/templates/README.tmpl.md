@@ -19,7 +19,7 @@ read it alongside these to see a worked example.
 | Token | Meaning | aaa value |
 |---|---|---|
 | `<slug>` | project slug (`project:`) | `aaa` |
-| `<squad>` | squad name (`squad.name`) | `infina-insurance-dev` |
+| `<squad>` | squad name (`squad.name`) | `mica` |
 | `<org>` | GitHub org | `RealStake` |
 | `<repo-fe>` | frontend repo (`repos.*.type: frontend`) | `infina-insurance-partner-webapp` |
 | `<repo-be>` | backend repo (`repos.*.type: backend`) | `infina-insurance-partner-services` |
